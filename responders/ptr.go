@@ -2,30 +2,49 @@ package responders
 
 import (
 	"github.com/galenliu/dnssd/core"
-	"github.com/galenliu/dnssd/core/QType"
-	"github.com/galenliu/dnssd/record"
+	"github.com/miekg/dns"
 )
 
 type PtrResponder struct {
-	*recordResponder
-	mTarget *core.FullQName
+	dns.PTR
 }
 
-func NewPtrResponder(qName *core.FullQName, target *core.FullQName) *PtrResponder {
-	return &PtrResponder{
-		recordResponder: &recordResponder{
-			responder: &responder{
-				mQType: QType.PTR,
-				mQName: qName,
+func NewPtrResponder(name, target core.FullQName) *PtrResponder {
+	ptr := &PtrResponder{
+		PTR: dns.PTR{
+			Hdr: dns.RR_Header{
+				Name:     name.String(),
+				Rrtype:   dns.TypePTR,
+				Class:    dns.ClassINET,
+				Ttl:      kDefaultTtl,
+				Rdlength: 0,
 			},
-			mTtl: kDefaultTtl,
+			Ptr: target.String(),
 		},
-		mTarget: target,
 	}
+	return ptr
 }
 
-func (p *PtrResponder) AddAllResponses(info *IPPacket.Info, delegate ResponderDelegate, configuration *ResponseConfiguration) {
-	r := record.NewPtrResourceRecord(p.GetQName(), p.mTarget)
-	configuration.Adjust(r)
-	delegate.AddResponse(r)
+func (p PtrResponder) GetName() string {
+	return p.PTR.Hdr.Name
+}
+
+func (p PtrResponder) GetType() uint16 {
+	return p.PTR.Hdr.Rrtype
+}
+
+func (p PtrResponder) GetClass() uint16 {
+	return p.PTR.Hdr.Class
+}
+
+func (p PtrResponder) GetTtl() uint32 {
+	return p.PTR.Hdr.Ttl
+}
+
+func (p PtrResponder) SetTtl(ttl uint32) {
+	p.PTR.Hdr.Ttl = ttl
+}
+
+func (p PtrResponder) ResourceRecord() dns.RR {
+	return &p.PTR
 }

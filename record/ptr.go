@@ -3,16 +3,17 @@ package record
 import (
 	"github.com/galenliu/dnssd/core"
 	"github.com/galenliu/dnssd/core/QType"
+	"github.com/miekg/dns"
 )
 
 type PtrResourceRecord struct {
-	*resourceRecord
-	mPtrName *core.FullQName
+	*Resource
+	mPtrName core.FullQName
 }
 
-func NewPtrResourceRecord(qName, ptrName *core.FullQName) *PtrResourceRecord {
+func NewPtrResourceRecord(qName, ptrName core.FullQName) *PtrResourceRecord {
 	return &PtrResourceRecord{
-		resourceRecord: &resourceRecord{
+		Resource: &Resource{
 			mQType:      QType.PTR,
 			mQname:      qName,
 			mCacheFlush: false,
@@ -21,10 +22,8 @@ func NewPtrResourceRecord(qName, ptrName *core.FullQName) *PtrResourceRecord {
 	}
 }
 
-func (r *PtrResourceRecord) GetPtr() *core.FullQName {
+func (r *PtrResourceRecord) GetPtr() core.FullQName {
+	h := dns.RR_Header{}
+	h.Header()
 	return r.mPtrName
-}
-
-func (r *PtrResourceRecord) WriteData(writer *core.RecordWriter) bool {
-	return true
 }

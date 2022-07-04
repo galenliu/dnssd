@@ -1,6 +1,7 @@
 package mdns
 
 import (
+	"github.com/galenliu/chip/inet/Interface"
 	"github.com/galenliu/chip/inet/udp_endpoint"
 	"net/netip"
 )

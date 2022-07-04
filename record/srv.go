@@ -1,25 +1,29 @@
 package record
 
-import "github.com/galenliu/dnssd/core"
+import (
+	"github.com/galenliu/dnssd/core"
+	"github.com/galenliu/dnssd/core/QType"
+)
 
 type SrvResourceRecord struct {
-	*resourceRecord
-	mServerName *core.FullQName
+	Resource
+	mServerName core.FullQName
 	mPort       uint16
 	mPriority   uint16
 	mWeight     uint16
 }
 
-func NewSrvResourceRecord(qName *core.FullQName, hostName *core.FullQName, port int) *SrvResourceRecord {
+func NewSrvResourceRecord(qName core.FullQName, serverName core.FullQName, port uint16) *SrvResourceRecord {
 	return &SrvResourceRecord{
-		resourceRecord: nil,
-		mServerName:    nil,
-		mPort:          0,
-		mPriority:      0,
-		mWeight:        0,
+		Resource: Resource{
+			mTtl:        kDefaultTtl,
+			mQType:      QType.SRV,
+			mQname:      qName,
+			mCacheFlush: false,
+		},
+		mServerName: serverName,
+		mPort:       port,
+		mPriority:   0,
+		mWeight:     0,
 	}
-}
-
-func (r *SrvResourceRecord) WriteData(writer *core.RecordWriter) bool {
-	return true
 }

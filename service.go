@@ -2,17 +2,8 @@ package dnssd
 
 import (
 	"fmt"
+	"github.com/galenliu/dnssd/chip"
 	"net/netip"
-)
-
-const (
-	kSubtypeServiceNamePart    = "_sub"
-	kCommissionableServiceName = "_matterc"
-	kCommissionerServiceName   = "_matterd"
-	kOperationalServiceName    = "_matter"
-	kCommissionProtocol        = "_udp"
-	kLocalDomain               = "local"
-	kOperationalProtocol       = "_tcp"
 )
 
 type Config struct {
@@ -27,11 +18,11 @@ type Config struct {
 }
 
 func NewConf(instanceName string) *Config {
-	t := fmt.Sprintf("%s.%s", kCommissionableServiceName, kCommissionProtocol)
+	t := fmt.Sprintf("%s.%s", chip.KCommissionableServiceName, chip.KCommissionProtocol)
 	return &Config{
 		Name:   instanceName,
 		Type:   t,
-		Domain: kLocalDomain,
+		Domain: chip.KLocalDomain,
 		Host:   "",
 		Text:   nil,
 		IPs:    nil,

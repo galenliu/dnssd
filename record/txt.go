@@ -9,21 +9,17 @@ const kTxtDefaultTtl = 4500
 const kMaxTxtRecordLength = 63
 
 type TxtResourceRecord struct {
-	*resourceRecord
+	Resource
 	mEntries string
 }
 
-func NewTxtResourceRecord(qName *core.FullQName, entries *core.FullQName) *TxtResourceRecord {
+func NewTxtResourceRecord(qName core.FullQName) *TxtResourceRecord {
 	return &TxtResourceRecord{
-		resourceRecord: &resourceRecord{
+		Resource: Resource{
 			mTtl:        kTxtDefaultTtl,
 			mQType:      QType.TXT,
 			mQname:      qName,
 			mCacheFlush: false,
 		},
 	}
-}
-
-func (r *TxtResourceRecord) WriteData(writer *core.RecordWriter) bool {
-	return true
 }

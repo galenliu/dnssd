@@ -1,43 +1,50 @@
 package mdns
 
 import (
-	"github.com/galenliu/dnssd/core"
-	"github.com/galenliu/dnssd/core/QClass"
-	"github.com/galenliu/dnssd/core/QType"
-	"github.com/galenliu/dnssd/core/ResourceType"
+	"github.com/miekg/dns"
 )
 
 const kSizeBytes uint8 = 12
 const kMaxValueSize = 63
 
-type ParserDelegate interface {
-	OnHeader(header *core.ConstHeaderRef)
-	OnQuery(queryData *QueryData)
-	OnResource(t ResourceType.T, data *ResourceData)
-}
-
-type ResourceData struct {
-	mType  QType.T
-	mClass QClass.T
-	mTtl   uint64
-	mData  core.BytesRange
-}
-
 type QueryData struct {
-	mType                QType.T
-	mClass               QClass.T
+	*dns.Msg
 	mAnswerViaUnicast    bool
 	mIsInternalBroadcast bool
 }
 
-func NewQueryData(qType QType.T, kClass QClass.T, unicast bool) *QueryData {
-	return &QueryData{
-		mType:                qType,
-		mClass:               kClass,
+func NewQueryData(qType, class uint16, unicast bool) *QueryData {
+	data := &QueryData{
+		Msg: &dns.Msg{
+			Question: make([]dns.Question, 1),
+		},
 		mAnswerViaUnicast:    unicast,
 		mIsInternalBroadcast: false,
 	}
+	data.Question[0] = dns.Question{
+		Name:   "",
+		Qtype:  qType,
+		Qclass: class,
+	}
+	return data
 }
+
+//func NewQueryData(qType QType.T, kClass QClass.T, unicast bool) *QueryData {
+//	return &QueryData{
+//		Msg: dns.Msg{
+//			MsgHdr:   dns.MsgHdr{},
+//			Compress: false,
+//			Question: nil,
+//			Answer:   nil,
+//			Ns:       nil,
+//			Extra:    nil,
+//		},
+//		mType:                qType,
+//		mClass:               kClass,
+//		mAnswerViaUnicast:    unicast,
+//		mIsInternalBroadcast: false,
+//	}
+//}
 
 //func (q *QueryData) Parse(validData *core.BytesRange, start, end uint8) bool {
 //	// Structure is:
@@ -56,62 +63,63 @@ func (q *QueryData) SetIsInternalBroadcast(isInternalBroadcast bool) {
 	q.mIsInternalBroadcast = isInternalBroadcast
 }
 
-func (q *QueryData) GetType() QType.T {
-	return q.mType
+func (q *QueryData) GetType() uint16 {
+	return q.Msg.Question[0].Qtype
 }
 
-func (q *QueryData) GetClass() QClass.T {
-	return q.mClass
+func (q *QueryData) GetClass() uint16 {
+	return q.Msg.Question[0].Qclass
 }
 
 func (q *QueryData) IsInternalBroadcast() bool {
 	return q.mIsInternalBroadcast
 }
 
-func (q *QueryData) GetName() core.FullQName {
-	return core.FullQName{
-		Instance:   "",
-		ServerType: "",
-		Protocol:   "",
-		Domain:     "",
-		Txt:        nil,
-	}
-}
-
 func (q *QueryData) RequestedUnicastAnswer() bool {
 	return q.mAnswerViaUnicast
 }
 
-func ParsePacket(packetData *core.BytesRange, delegate ParserDelegate) bool {
-
-	if packetData.Size() < core.KSizeBytes {
-		return false
-	}
-	var header = &core.ConstHeaderRef{Data: packetData.Bytes()}
-
-	if !header.GetFlags().IsValidMdns() {
-		return false
-	}
-
-	// set messageId
-	delegate.OnHeader(header)
-	{
-		queryDataList := packetData.ParseQueryData()
-		for _, queryData := range queryDataList {
-			delegate.OnQuery(queryData)
-		}
-
-		resourceDataList := packetData.ParseQueryResourceData()
-		for _, resourceData := range resourceDataList {
-			delegate.OnResource(ResourceType.Answer, resourceData)
-		}
-
-		resourceAdditionalList := packetData.ParseQueryResourceAdditional()
-		for _, resourceData := range resourceAdditionalList {
-			delegate.OnResource(ResourceType.Additional, resourceData)
-		}
-
-	}
-
-	return true
+func (q *QueryData) GetName() string {
+	return q.Question[0].Name
 }
+
+//func ParsePacket(packetData *core.BytesRange, delegate ParserDelegate) bool {
+//
+//	if packetData.Size() < core.KSizeBytes {
+//		return false
+//	}
+//	var header = &core.ConstHeaderRef{
+//		ID:      packetData.Get16At(core.KMessageIdOffset),
+//		FLAGS:   packetData.Get16At(core.KFlagsOffset),
+//		QDCOUNT: packetData.Get16At(core.KQueryCountOffset),
+//		ANCOUNT: packetData.Get16At(core.KAnswerCountOffset),
+//		NSCOUNT: packetData.Get16At(core.KAuthorityCountOffset),
+//		ARCOUNT: packetData.Get16At(core.KAdditionalCountOffset),
+//	}
+//
+//	if !header.IsValidMdns() {
+//		return false
+//	}
+//
+//	// set messageId
+//	delegate.OnHeader(header)
+//	{
+//		queryDataList := packetData.ParseQueryData()
+//		for _, queryData := range queryDataList {
+//			delegate.OnQuery(queryData)
+//		}
+//
+//		resourceDataList := packetData.ParseQueryResourceData()
+//		for _, resourceData := range resourceDataList {
+//			delegate.OnResource(ResourceType.Answer, resourceData)
+//		}
+//
+//		resourceAdditionalList := packetData.ParseQueryResourceAdditional()
+//		for _, resourceData := range resourceAdditionalList {
+//			delegate.OnResource(ResourceType.Additional, resourceData)
+//		}
+//
+//	}
+//
+//	return true
+//}

@@ -1,5 +1,6 @@
 package core
 
+/*
 import (
 	"bytes"
 	"encoding/binary"
@@ -37,7 +38,7 @@ func (r *BytesRange) Get8At(at uint8) uint8 {
 	return data
 }
 
-func (r *BytesRange) Get16At(offset uint8) uint16 {
+func (r *BytesRange) Get16At(offset uint16) uint16 {
 	return binary.BigEndian.Uint16(r.data[offset : offset+2])
 }
 
@@ -84,3 +85,4 @@ func (r *BytesRange) ParseQueryResourceData() []*mdns.ResourceData {
 func (r *BytesRange) ParseQueryResourceAdditional() []*mdns.ResourceData {
 	return nil
 }
+*/
