@@ -4,6 +4,10 @@ type QueryResponder struct {
 	ResponderInfos []*QueryResponderInfo // TODO 数量需要做限定
 }
 
+func NewQueryResponder() *QueryResponder {
+	return &QueryResponder{ResponderInfos: make([]*QueryResponderInfo, 0)}
+}
+
 func (r *QueryResponder) ResetAdditionals() {
 	for _, r := range r.ResponderInfos {
 		r.reportNowAsAdditional = false

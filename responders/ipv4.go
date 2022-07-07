@@ -1,7 +1,7 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/core"
+	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
 	"net"
 )
@@ -10,7 +10,7 @@ type IPv4Responder struct {
 	dns.A
 }
 
-func NewIPv4Responder(qname core.FullQName) *IPv4Responder {
+func NewIPv4Responder(qname QName.FullQName) *IPv4Responder {
 	ip4 := &IPv4Responder{
 		A: dns.A{
 			Hdr: dns.RR_Header{

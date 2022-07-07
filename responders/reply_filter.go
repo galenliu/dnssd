@@ -1,8 +1,8 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/core/QClass"
-	"github.com/galenliu/dnssd/core/QType"
+	"github.com/galenliu/dnssd/QClass"
+	"github.com/galenliu/dnssd/QType"
 )
 
 type ReplyFilter interface {

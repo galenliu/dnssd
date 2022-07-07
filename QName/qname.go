@@ -1,11 +1,9 @@
-package core
+package QName
 
 import (
 	"github.com/miekg/dns"
 	"strings"
 )
-
-type QNamePart = []byte
 
 type FullQName string
 

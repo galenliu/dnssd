@@ -1,8 +1,8 @@
 package record
 
 import (
-	"github.com/galenliu/dnssd/core"
-	"github.com/galenliu/dnssd/core/QType"
+	"github.com/galenliu/dnssd/QName"
+	"github.com/galenliu/dnssd/QType"
 )
 
 const kDefaultTtl = 120
@@ -10,7 +10,7 @@ const kDefaultTtl = 120
 type Resource struct {
 	mTtl        uint32
 	mQType      QType.T
-	mQname      core.FullQName
+	mQname      QName.FullQName
 	mCacheFlush bool
 }
 
@@ -37,6 +37,6 @@ func (r *Resource) getTtl() uint32 {
 	return r.mTtl
 }
 
-func (r *Resource) GetName() core.FullQName {
+func (r *Resource) GetName() QName.FullQName {
 	return r.mQname
 }

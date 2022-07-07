@@ -1,7 +1,7 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/core"
+	"github.com/galenliu/dnssd/QName"
 	"github.com/galenliu/dnssd/record"
 	"github.com/miekg/dns"
 )
@@ -13,7 +13,7 @@ type TxtResponder struct {
 	mRecord *record.TxtResourceRecord
 }
 
-func NewTxtResponder(qname core.FullQName, txt []string) *TxtResponder {
+func NewTxtResponder(qname QName.FullQName, txt []string) *TxtResponder {
 	return &TxtResponder{
 		TXT: dns.TXT{
 			Hdr: dns.RR_Header{

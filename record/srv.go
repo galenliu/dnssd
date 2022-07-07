@@ -1,19 +1,19 @@
 package record
 
 import (
-	"github.com/galenliu/dnssd/core"
-	"github.com/galenliu/dnssd/core/QType"
+	"github.com/galenliu/dnssd/QName"
+	"github.com/galenliu/dnssd/QType"
 )
 
 type SrvResourceRecord struct {
 	Resource
-	mServerName core.FullQName
+	mServerName QName.FullQName
 	mPort       uint16
 	mPriority   uint16
 	mWeight     uint16
 }
 
-func NewSrvResourceRecord(qName core.FullQName, serverName core.FullQName, port uint16) *SrvResourceRecord {
+func NewSrvResourceRecord(qName QName.FullQName, serverName QName.FullQName, port uint16) *SrvResourceRecord {
 	return &SrvResourceRecord{
 		Resource: Resource{
 			mTtl:        kDefaultTtl,

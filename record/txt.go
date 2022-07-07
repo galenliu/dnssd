@@ -1,8 +1,8 @@
 package record
 
 import (
-	"github.com/galenliu/dnssd/core"
-	"github.com/galenliu/dnssd/core/QType"
+	"github.com/galenliu/dnssd/QName"
+	"github.com/galenliu/dnssd/QType"
 )
 
 const kTxtDefaultTtl = 4500
@@ -13,7 +13,7 @@ type TxtResourceRecord struct {
 	mEntries string
 }
 
-func NewTxtResourceRecord(qName core.FullQName) *TxtResourceRecord {
+func NewTxtResourceRecord(qName QName.FullQName) *TxtResourceRecord {
 	return &TxtResourceRecord{
 		Resource: Resource{
 			mTtl:        kTxtDefaultTtl,

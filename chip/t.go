@@ -7,10 +7,10 @@ const (
 	KSubtypeServiceNamePart                = "_sub"
 	KCommissionableServiceName ServiceType = "_matterc"
 	KCommissionerServiceName   ServiceType = "_matterd"
-	kOperationalServiceName    ServiceType = "_matter"
+	KOperationalServiceName    string      = "_matter"
 	KCommissionProtocol                    = "_udp"
 	KLocalDomain                           = "local"
-	kOperationalProtocol                   = "_tcp"
+	KOperationalProtocol                   = "_tcp"
 )
 
 func (s ServiceType) String() string {

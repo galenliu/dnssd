@@ -1,7 +1,7 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/core"
+	"github.com/galenliu/dnssd/QName"
 	"time"
 )
 
@@ -15,5 +15,5 @@ type QueryResponderInfo struct {
 	Responder                 Responder
 	reportNowAsAdditional     bool
 	alsoReportAdditionalQName bool
-	additionalQName           core.FullQName
+	additionalQName           QName.FullQName
 }

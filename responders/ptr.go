@@ -1,7 +1,7 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/core"
+	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
 )
 
@@ -9,7 +9,7 @@ type PtrResponder struct {
 	dns.PTR
 }
 
-func NewPtrResponder(name, target core.FullQName) *PtrResponder {
+func NewPtrResponder(name, target QName.FullQName) *PtrResponder {
 	ptr := &PtrResponder{
 		PTR: dns.PTR{
 			Hdr: dns.RR_Header{

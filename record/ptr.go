@@ -1,17 +1,17 @@
 package record
 
 import (
-	"github.com/galenliu/dnssd/core"
-	"github.com/galenliu/dnssd/core/QType"
+	"github.com/galenliu/dnssd/QName"
+	"github.com/galenliu/dnssd/QType"
 	"github.com/miekg/dns"
 )
 
 type PtrResourceRecord struct {
 	*Resource
-	mPtrName core.FullQName
+	mPtrName QName.FullQName
 }
 
-func NewPtrResourceRecord(qName, ptrName core.FullQName) *PtrResourceRecord {
+func NewPtrResourceRecord(qName, ptrName QName.FullQName) *PtrResourceRecord {
 	return &PtrResourceRecord{
 		Resource: &Resource{
 			mQType:      QType.PTR,
@@ -22,7 +22,7 @@ func NewPtrResourceRecord(qName, ptrName core.FullQName) *PtrResourceRecord {
 	}
 }
 
-func (r *PtrResourceRecord) GetPtr() core.FullQName {
+func (r *PtrResourceRecord) GetPtr() QName.FullQName {
 	h := dns.RR_Header{}
 	h.Header()
 	return r.mPtrName

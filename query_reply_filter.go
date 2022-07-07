@@ -1,7 +1,7 @@
 package dnssd
 
 import (
-	"github.com/galenliu/dnssd/core/QType"
+	"github.com/galenliu/dnssd/QType"
 	"github.com/galenliu/dnssd/mdns"
 	"github.com/galenliu/dnssd/responders"
 	"github.com/miekg/dns"

@@ -1,13 +1,9 @@
 package mdns
 
 import (
-	"github.com/galenliu/chip/inet/IP"
 	"github.com/galenliu/gateway/pkg/log"
 	"github.com/miekg/dns"
-	"net"
 	"net/netip"
-	"strconv"
-	"sync"
 )
 
 type QueryDelegate interface {
@@ -15,37 +11,15 @@ type QueryDelegate interface {
 }
 
 type Server struct {
-	servers []*dns.Server
-	//mResponseDelegate     PacketDelegate
-	//mQueryDelegate        PacketDelegate
+	servers               []*dns.Server
 	mDelegate             QueryDelegate
 	mIpv6BroadcastAddress netip.Addr
+	mPort                 uint16
 }
 
-func (m *Server) ShutdownEndpoint(info EndpointInfo) {
-	//TODO implement me
-	panic("implement me")
-}
-
-var insServer *Server
-var serOnce sync.Once
-
-func GlobalServer() *Server {
-	serOnce.Do(func() {
-		insServer = newMdnsServer()
-	})
-	return insServer
-}
-
-func DefaultServer() *Server {
-	serOnce.Do(func() {
-		insServer = newMdnsServer()
-	})
-	return insServer
-}
-
-func newMdnsServer() *Server {
-	return &Server{}
+func (m Server) Init() *Server {
+	m.servers = make([]*dns.Server, 0)
+	return &m
 }
 
 func (m *Server) Shutdown() {
@@ -57,70 +31,64 @@ func (m *Server) Shutdown() {
 	}
 }
 
-func (m *Server) StartServer(listeners []net.Listener, port uint16) error {
+func (m *Server) StartServer(adders []netip.Addr, port uint16) error {
 	m.Shutdown()
-	if listeners != nil {
-		for _, l := range listeners {
-			server := &dns.Server{
-				Net:               "",
-				Listener:          l,
-				TLSConfig:         nil,
-				PacketConn:        nil,
-				Handler:           m,
-				UDPSize:           0,
-				ReadTimeout:       0,
-				WriteTimeout:      0,
-				IdleTimeout:       nil,
-				TsigProvider:      nil,
-				TsigSecret:        nil,
-				NotifyStartedFunc: nil,
-				DecorateReader:    nil,
-				DecorateWriter:    nil,
-				MaxTCPQueries:     0,
-				ReusePort:         true,
-				MsgAcceptFunc:     nil,
+	m.mPort = port
+	var adder, net string
+	if adders != nil {
+		for _, a := range adders {
+			if !a.IsValid() {
+				log.Info("invalid addr")
+				continue
 			}
-			m.servers = append(m.servers, server)
+			if a.Is4() {
+				net = "udp4"
+				adder = netip.AddrPortFrom(a, port).String()
+			}
+			if a.Is6() {
+				net = "udp6"
+				adder = netip.AddrPortFrom(a, port).String()
+			}
+			m.servers = append(m.servers, &dns.Server{
+				Addr:      adder,
+				Net:       net,
+				ReusePort: true,
+			})
 		}
-		return nil
-	}
+	} else {
+		if ad := netip.AddrPortFrom(netip.IPv4Unspecified(), port); ad.IsValid() {
+			adder = ad.String()
+			net = "udp4"
+			m.servers = append(m.servers, &dns.Server{
+				Addr:      adder,
+				Net:       net,
+				ReusePort: true,
+			})
+		}
+		if ad := netip.AddrPortFrom(netip.IPv6Unspecified(), port); ad.IsValid() {
+			adder = ad.String()
 
-	m.servers = append(m.servers, &dns.Server{
-		Addr:              ":" + strconv.Itoa(int(port)),
-		Net:               "udp",
-		TLSConfig:         nil,
-		PacketConn:        nil,
-		Handler:           m,
-		UDPSize:           0,
-		ReadTimeout:       0,
-		WriteTimeout:      0,
-		IdleTimeout:       nil,
-		TsigProvider:      nil,
-		TsigSecret:        nil,
-		NotifyStartedFunc: nil,
-		DecorateReader:    nil,
-		DecorateWriter:    nil,
-		MaxTCPQueries:     0,
-		ReusePort:         true,
-		MsgAcceptFunc:     nil,
-	})
+			net = "udp6"
+			m.servers = append(m.servers, &dns.Server{
+				Addr:      adder,
+				Net:       net,
+				ReusePort: true,
+			})
+		}
+	}
 	for _, s := range m.servers {
 		s := s
 		go func() {
+			log.Infof("mDns listen  adder: %s", s.Addr)
 			err := s.ListenAndServe()
 			if err != nil {
+				log.Infof("mDns server exit addr:%s", s.Addr)
 				log.Info(err.Error())
 			}
 		}()
 	}
 	return nil
 }
-
-//func (m *Server) OnQuery(data *core.BytesRange, info *IPPacket.Info) {
-//	if m.mQueryDelegate != nil {
-//		m.mResponseDelegate.OnMdnsPacketData(data, info)
-//	}
-//}
 
 func (m *Server) SetQueryDelegate(delegate QueryDelegate) {
 	m.mDelegate = delegate
@@ -134,12 +102,23 @@ func (m *Server) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 	})
 }
 
-func GetIpv4Into() IP.Address {
-	addr := netip.AddrFrom4([4]byte{224, 0, 0, 251})
-	return IP.Address{Addr: addr}
+func (m *Server) Broadcast(msg *dns.Msg) error {
+	clint := new(dns.Client)
+	clint.Net = "udp"
+	addr := netip.AddrPortFrom(GetIpv4Into(), m.mPort).String()
+	_, _, err := clint.Exchange(msg, addr)
+	if err != nil {
+		log.Info(err.Error())
+	}
+	return nil
 }
 
-func GetIpv6Into() IP.Address {
+func GetIpv4Into() netip.Addr {
+	addr := netip.AddrFrom4([4]byte{224, 0, 0, 251})
+	return addr
+}
+
+func GetIpv6Into() netip.Addr {
 	addr, _ := netip.ParseAddr("FF02::FB")
-	return IP.Address{Addr: addr}
+	return addr
 }

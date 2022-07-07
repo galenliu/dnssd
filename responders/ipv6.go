@@ -1,7 +1,7 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/core"
+	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
 	"net"
 )
@@ -10,7 +10,7 @@ type IPv6Responder struct {
 	dns.AAAA
 }
 
-func NewIPv6Responder(qname core.FullQName) *IPv6Responder {
+func NewIPv6Responder(qname QName.FullQName) *IPv6Responder {
 	ip6 := &IPv6Responder{
 		AAAA: dns.AAAA{
 			Hdr: dns.RR_Header{
