@@ -1,20 +1,19 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/record"
+	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
 )
 
 type SrvResponder struct {
 	dns.SRV
-	mRecord *record.SrvResourceRecord
 }
 
-func NewSrvResponder(r *record.SrvResourceRecord) *SrvResponder {
+func NewSrvResponder(qName QName.FullQName, serverName QName.FullQName, port uint16) *SrvResponder {
 	return &SrvResponder{
 		SRV: dns.SRV{
 			Hdr: dns.RR_Header{
-				Name:     "",
+				Name:     qName.String(),
 				Rrtype:   dns.TypeSRV,
 				Class:    dns.ClassINET,
 				Ttl:      kDefaultTtl,
@@ -22,10 +21,9 @@ func NewSrvResponder(r *record.SrvResourceRecord) *SrvResponder {
 			},
 			Priority: 0,
 			Weight:   0,
-			Port:     0,
-			Target:   "",
+			Port:     port,
+			Target:   serverName.String(),
 		},
-		mRecord: r,
 	}
 }
 

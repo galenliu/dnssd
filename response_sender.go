@@ -67,7 +67,7 @@ func (r *ResponseSender) Respond(w dns.ResponseWriter, query *mdns.QueryData, co
 
 	r.mResponders.ResetAdditionals()
 
-	log.Infof("Query Message Respond: \t\n %s", query.Msg.String())
+	log.Infof("Query Message Respond:\t\n %s ", query.Msg.String())
 	msg := &dns.Msg{}
 	msg.SetReply(query.Msg)
 	// send all 'Answer' replies
@@ -82,6 +82,9 @@ func (r *ResponseSender) Respond(w dns.ResponseWriter, query *mdns.QueryData, co
 		for _, info := range r.mResponders.ResponderInfos {
 			if !responseFilter.Accept(info) {
 				continue
+			}
+			if configuration != nil {
+				configuration.Adjust(info.Responder)
 			}
 			msg.Answer = append(msg.Answer, info.Responder.ResourceRecord())
 			if err := r.mSendState.GetError(); err != nil {
@@ -106,6 +109,9 @@ func (r *ResponseSender) Respond(w dns.ResponseWriter, query *mdns.QueryData, co
 		for _, info := range r.mResponders.ResponderInfos {
 			if !responseFilter.Accept(info) {
 				continue
+			}
+			if configuration != nil {
+				configuration.Adjust(info.Responder)
 			}
 			msg.Answer = append(msg.Answer, info.Responder.ResourceRecord())
 			if err := r.mSendState.GetError(); err != nil {

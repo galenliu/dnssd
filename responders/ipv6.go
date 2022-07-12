@@ -3,7 +3,7 @@ package responders
 import (
 	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
-	"net"
+	"net/netip"
 )
 
 type IPv6Responder struct {
@@ -20,7 +20,7 @@ func NewIPv6Responder(qname QName.FullQName) *IPv6Responder {
 				Ttl:      kDefaultTtl,
 				Rdlength: 0,
 			},
-			AAAA: net.IP{},
+			AAAA: netip.IPv6Unspecified().AsSlice(),
 		},
 	}
 	return ip6

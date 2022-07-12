@@ -23,11 +23,11 @@ type Advertiser struct {
 	mServer         *mdns.Server
 }
 
-func (a *Advertiser) Init(adders []netip.Addr, port uint16) error {
+func (a Advertiser) Init(adders []netip.Addr, port uint16) (*Advertiser, error) {
 
 	a.mServer = new(mdns.Server).Init()
 	a.mResponseSender = new(ResponseSender).Int()
-	a.mServer.SetQueryDelegate(a)
+	a.mServer.SetQueryDelegate(&a)
 
 	a.mServer = new(mdns.Server)
 	a.mServer.Init()
@@ -37,17 +37,17 @@ func (a *Advertiser) Init(adders []netip.Addr, port uint16) error {
 
 	err := a.mServer.StartServer(adders, port)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = a.AdvertiseRecords(KStarted)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	a.mIsInitialized = true
 
-	return nil
+	return &a, nil
 }
 
 func (a *Advertiser) RemoveServices() error {

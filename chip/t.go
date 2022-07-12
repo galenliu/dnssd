@@ -1,22 +1,11 @@
 package chip
 
-type ServiceType string
-type Protocol string
-
 const (
-	KSubtypeServiceNamePart                = "_sub"
-	KCommissionableServiceName ServiceType = "_matterc"
-	KCommissionerServiceName   ServiceType = "_matterd"
-	KOperationalServiceName    string      = "_matter"
-	KCommissionProtocol                    = "_udp"
-	KLocalDomain                           = "local"
-	KOperationalProtocol                   = "_tcp"
+	SubtypeServiceNamePart    = "_sub"
+	CommissionableServiceName = "_matterc"
+	CommissionerServiceName   = "_matterd"
+	OperationalServiceName    = "_matter"
+	CommissionProtocol        = "_udp"
+	LocalDomain               = "local"
+	OperationalProtocol       = "_tcp"
 )
-
-func (s ServiceType) String() string {
-	return string(s)
-}
-
-func (s Protocol) String() string {
-	return string(s)
-}

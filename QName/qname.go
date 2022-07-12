@@ -7,7 +7,7 @@ import (
 
 type FullQName string
 
-func ParseFullQName(args ...string) FullQName {
+func Fqdn(args ...string) FullQName {
 	var s string
 	for _, a := range args {
 		if a == "" {
