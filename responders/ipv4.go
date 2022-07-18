@@ -1,7 +1,6 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
 	"net/netip"
 )
@@ -10,11 +9,11 @@ type IPv4Responder struct {
 	dns.A
 }
 
-func NewIPv4Responder(qname QName.FullQName) *IPv4Responder {
+func NewIPv4Responder(qname string) *IPv4Responder {
 	ip4 := &IPv4Responder{
 		A: dns.A{
 			Hdr: dns.RR_Header{
-				Name:     qname.String(),
+				Name:     qname,
 				Rrtype:   dns.TypeA,
 				Class:    dns.ClassINET,
 				Ttl:      0,

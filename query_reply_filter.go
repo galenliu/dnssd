@@ -1,7 +1,6 @@
 package dnssd
 
 import (
-	"github.com/galenliu/dnssd/QType"
 	"github.com/galenliu/dnssd/mdns"
 	"github.com/galenliu/dnssd/responders"
 	"github.com/miekg/dns"
@@ -33,7 +32,7 @@ func (f *QueryReplyFilter) Accept(qType, qClass uint16, fName string) bool {
 	return f.acceptablePath(fName)
 }
 
-func (f *QueryReplyFilter) acceptableQueryType(qType QType.T) bool {
+func (f *QueryReplyFilter) acceptableQueryType(qType uint16) bool {
 	if f.mSendingAdditionalItems {
 		return true
 	}

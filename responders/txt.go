@@ -1,8 +1,6 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/QName"
-	"github.com/galenliu/dnssd/record"
 	"github.com/miekg/dns"
 )
 
@@ -10,14 +8,13 @@ const kTxtDefaultTtl = 4500
 
 type TxtResponder struct {
 	dns.TXT
-	mRecord *record.TxtResourceRecord
 }
 
-func NewTxtResponder(qname QName.FullQName, txt []string) *TxtResponder {
+func NewTxtResponder(qname string, txt []string) *TxtResponder {
 	return &TxtResponder{
 		TXT: dns.TXT{
 			Hdr: dns.RR_Header{
-				Name:     qname.String(),
+				Name:     qname,
 				Rrtype:   dns.TypeTXT,
 				Class:    dns.ClassINET,
 				Ttl:      kTxtDefaultTtl,

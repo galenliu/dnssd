@@ -1,6 +1,6 @@
 module github.com/galenliu/dnssd
 
-go 1.18
+go 1.19
 
 require (
 	github.com/brutella/dnssd v1.2.2

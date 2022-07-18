@@ -1,7 +1,6 @@
 package responders
 
 import (
-	"github.com/galenliu/dnssd/QName"
 	"github.com/miekg/dns"
 	"net/netip"
 )
@@ -10,11 +9,11 @@ type IPv6Responder struct {
 	dns.AAAA
 }
 
-func NewIPv6Responder(qname QName.FullQName) *IPv6Responder {
+func NewIPv6Responder(qname string) *IPv6Responder {
 	ip6 := &IPv6Responder{
 		AAAA: dns.AAAA{
 			Hdr: dns.RR_Header{
-				Name:     qname.String(),
+				Name:     qname,
 				Rrtype:   dns.TypeAAAA,
 				Class:    dns.ClassINET,
 				Ttl:      kDefaultTtl,

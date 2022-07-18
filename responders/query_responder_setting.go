@@ -1,9 +1,5 @@
 package responders
 
-import (
-	"github.com/galenliu/dnssd/QName"
-)
-
 type QueryResponderSettings struct {
 	mInfo *QueryResponderInfo
 }
@@ -12,7 +8,7 @@ func NewQueryResponderSettings(info *QueryResponderInfo) *QueryResponderSettings
 	return &QueryResponderSettings{mInfo: info}
 }
 
-func (s *QueryResponderSettings) SetReportAdditional(qName QName.FullQName) *QueryResponderSettings {
+func (s *QueryResponderSettings) SetReportAdditional(qName string) *QueryResponderSettings {
 	if s.IsValid() {
 		s.mInfo.alsoReportAdditionalQName = true
 		s.mInfo.additionalQName = qName
